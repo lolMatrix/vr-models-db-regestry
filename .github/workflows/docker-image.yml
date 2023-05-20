@@ -15,5 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-    - run: ./gradlew copyArchive
-    - run: docker build . --file src/docker/Dockerfile --tag vr-models-regustry:$(date +%s)
+      run: | 
+        ./gradlew copyArchive 
+        docker build . --file src/docker/Dockerfile --tag vr-models-regustry:$(date +%s)
