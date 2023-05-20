@@ -1,1 +1,16 @@
+diplom:
+  app:
+    jwtSecret: JBvcaoVzP65HLh1AJ8dKpC8JYyB0MdNRnYWrl//BBK2qq+kOKbywO0ZQZ17BQ+oId1Oyw0RVW7pxf8KQP0h9jYY7paXlHuBLlHgbqJ31CUOVR8ulb3k5QGhRJDSdDXfmBKrfr476ST7msPeJnXvVP3wJHppISkecVLrozhZOiQyc743gcvqoHrOvIHjCumLAA9mWdElzm4rpJbY1ifJns3Ava3Jax9Z5jEsS4djzJmMGlaSsFlCzgGZ2p0uyTodDdlnaBsBfcnQFU/M2bEM0rsIShdBk0gWmuo5XLoQx+FcCPp2SpcRUNq056EYezZDWVMJ9gjozU4Eziw4vJ6Myp64PD/NHX0X3xsLFFwBL2nY=
+    jwtExpirationMs: 99999999
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/model_registry
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQL94Dialect
+  flyway:
+    enabled: true
