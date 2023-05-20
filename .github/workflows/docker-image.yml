@@ -11,8 +11,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    runs:
-      using: 'docker'
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -21,6 +19,4 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     - name: Build the Docker image
-      run: | 
-        ./gradlew copyArchive 
-        docker build . --file src/docker/Dockerfile --tag vr-models-regustry:$(date +%s)
+      run: ./gradlew copyArchive
