@@ -9,26 +9,28 @@ function RegistrationForm() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
-    const [alertMessage, setAlertMessage] = useState('Password incorrect');
+    const [alertMessage, setAlertMessage] = useState('Логин или пароль не верен');
 
     const useRegistration = () => {
         if (!username) {
-            setAlertMessage('Login not provided')
+            setAlertMessage('Не представлен логин')
             setShowAlert(true)
             return;
         }
         if (!password) {
-            setAlertMessage('Password not provided')
+            setAlertMessage('Пароль не представлен')
             setShowAlert(true)
             return;
         }
-        console.log(`passwords: ['${password}', '${confirmPassword}'], equials: ${confirmPassword === password}`)
         if (confirmPassword !== password) {
-            setAlertMessage('Password incorrect')
+            setAlertMessage('Пароли не совпадают')
             setShowAlert(true)
             return;
         }
-        registration('http://localhost:8080/auth/reg', username, password).then(r => setShow(!r.ok))
+        registration('http://localhost:8080/auth/reg', username, password).then(r => {
+            setAlertMessage('Логин или пароль не верен')
+            setShow(!r.ok)
+        })
     };
 
     const handleUsername = event => setUsername(event.target.value)
@@ -41,12 +43,12 @@ function RegistrationForm() {
     return (
         <>
             <Form className="d-flex">
-                <Button variant="info" onClick={handleShow}>sing in</Button>
+                <Button variant="info" onClick={handleShow}>Регистрация</Button>
             </Form>
 
             <Modal show={show} onHide={handleClose} animation={true} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Регистрация</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Alert variant="danger" show={showAlert}>
@@ -54,25 +56,25 @@ function RegistrationForm() {
                     </Alert>
                     <Form>
                         <Form.Group className="mb-3" controlId="username">
-                            <Form.Label>User name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter user name" onChange={handleUsername}/>
+                            <Form.Label>Имя пользователя</Form.Label>
+                            <Form.Control type="text" placeholder="Введите имя" onChange={handleUsername}/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="password">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" onChange={handlePassword} />
+                            <Form.Label>Пароль</Form.Label>
+                            <Form.Control type="password" placeholder="Введите пароль" onChange={handlePassword} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="confirmPassword">
-                            <Form.Label>Confitm password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" onChange={handleConfirmPassword} />
+                            <Form.Label>Подтвердите пароль</Form.Label>
+                            <Form.Control type="password" placeholder="Подтверждение" onChange={handleConfirmPassword} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Закрыть
                     </Button>
                     <Button variant="primary" onClick={useRegistration}>
-                        Registration
+                        Зарегистрироваться
                     </Button>
                 </Modal.Footer>
             </Modal>

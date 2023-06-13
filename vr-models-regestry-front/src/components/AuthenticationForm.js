@@ -10,27 +10,33 @@ function AuthenticationForm() {
     const [showAlert, setShowAlert] = useState(false);
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
-    const [alertMessage, setAlertMessage] = useState('Password incorrect');
-    const [cookies, setCookies] = useCookies(['auth'])
+    const [alertMessage, setAlertMessage] = useState('Имя пользователя или пароль неверны');
+    const [, setCookies] = useCookies(['auth'])
 
-    const useRegistration = () => {
+    const useAuth = () => {
         if (!username) {
-            setAlertMessage('Login not provided')
+            setAlertMessage('Не представлено имя пользователя')
             setShowAlert(true)
             return;
         }
         if (!password) {
-            setAlertMessage('Password not provided')
+            setAlertMessage('Не представлен пароль')
             setShowAlert(true)
             return;
         }
         login('http://localhost:8080/auth/login', username, password).then(r => {
-            setShow(!r.ok)
-            console.log(r.ok)
             if (r.ok) {
-                r.body.getReader().read().then( rawToken => {
+                r.body.getReader().read().then(rawToken => {
                     let token = new TextDecoder().decode(rawToken.value)
                     setCookies('auth', token)
+                    window.location.href = '/'
+                })
+            } else {
+                r.body.getReader().read().then(error => {
+                    console.log(error)
+                    let message = new TextDecoder().decode(error.value)
+                    setShowAlert(true)
+                    setAlertMessage(message)
                 })
             }
         })
@@ -39,18 +45,21 @@ function AuthenticationForm() {
     const handleUsername = event => setUsername(event.target.value)
     const handlePassword = event => setPassword(event.target.value)
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false);
+        setShowAlert(false)
+    }
     const handleShow = () => setShow(true);
 
     return (
         <>
             <Form className="d-flex">
-                <Button variant="outline-info" onClick={handleShow}>sign up</Button>
+                <Button variant="outline-info" onClick={handleShow}>Авторизация</Button>
             </Form>
 
             <Modal show={show} onHide={handleClose} animation={true} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Авторизация</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Alert variant="danger" show={showAlert}>
@@ -58,21 +67,21 @@ function AuthenticationForm() {
                     </Alert>
                     <Form>
                         <Form.Group className="mb-3" controlId="username">
-                            <Form.Label>User name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter user name" onChange={handleUsername}/>
+                            <Form.Label>Имя пользователя</Form.Label>
+                            <Form.Control type="text" placeholder="Имя пользователя" onChange={handleUsername}/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="password">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" onChange={handlePassword} />
+                            <Form.Label>Пароль</Form.Label>
+                            <Form.Control type="password" placeholder="Пароль" onChange={handlePassword} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Закрыть
                     </Button>
-                    <Button variant="primary" onClick={useRegistration}>
-                        Login
+                    <Button variant="primary" onClick={useAuth}>
+                        Авторизоваться
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -81,7 +90,3 @@ function AuthenticationForm() {
 }
 
 export default AuthenticationForm;
-
-AuthenticationForm.propsType = {
-    setToken: PropTypes.func.isRequired
-};

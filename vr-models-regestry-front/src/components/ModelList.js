@@ -22,7 +22,7 @@ function ModelList() {
 
     if (data === undefined) {
         return (
-            <h1>Please, wait</h1>
+            <h1>Пожалуйста, подождите...</h1>
         )
     }
     return (
@@ -36,7 +36,7 @@ function ModelList() {
                                     <div className="fw-bold">{post.name}</div>
                                     <p>{post.description}</p>
                                 </div>
-                                { !post.haveInLibrary ? <AddToLibraryButton/> : '' }
+                                <AddToLibraryButton id={post.id} haveInLibrary={post.haveInLibrary}/>
                             </ListGroup.Item>
                         );
                     })

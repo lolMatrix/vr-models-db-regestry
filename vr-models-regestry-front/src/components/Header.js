@@ -1,14 +1,12 @@
-import React, {Component, useState} from "react";
-import {Button, Container, Form, Image, Nav, Navbar, NavLink} from "react-bootstrap";
+import React from "react";
+import {Container, Image, Nav, Navbar} from "react-bootstrap";
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import logo from '../logo.svg'
 import Home from "../pages/Home";
 import Library from "../pages/Library";
-import RegistrationForm from "./RegistrationForm";
-import AuthenticationForm from "./AuthenticationForm";
-import {useCookies} from "react-cookie";
 import NavLinks from "./NavLinks";
 import AuthorizationForms from "./AuthorizationForms";
+import LoadModel from "../pages/LoadModel";
 
 export default function Header() {
     return (
@@ -35,6 +33,7 @@ export default function Header() {
                 <Routes>
                     <Route exact path="/" element={<Home/>}/>
                     <Route exact path="/library" element={<Library/>}/>
+                    <Route exact path="/upload" element={<LoadModel/>}/>
                 </Routes>
             </Router>
         </>

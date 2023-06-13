@@ -1,8 +1,9 @@
 package ru.diplom.vrmodelsdbregestry.service
 
 import org.springframework.data.domain.Page
-import ru.diplom.vrmodelsdbregestry.model.DatabaseFile
+import org.springframework.web.multipart.MultipartFile
 import ru.diplom.vrmodelsdbregestry.model.Client
+import ru.diplom.vrmodelsdbregestry.model.DatabaseFile
 import java.util.UUID
 
 interface ModelContainerService {
@@ -10,7 +11,7 @@ interface ModelContainerService {
         name: String,
         description: String,
         createdBy: Client,
-        file: ByteArray
+        file: MultipartFile
     )
     fun getById(fileId: UUID) : DatabaseFile
     fun getList(

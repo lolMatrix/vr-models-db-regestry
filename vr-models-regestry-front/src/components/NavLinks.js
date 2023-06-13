@@ -7,14 +7,15 @@ export default function NavLinks() {
     if (cookies.auth !== undefined) {
         return (
             <>
-                <NavLink href="/">Home</NavLink>
-                <NavLink href="/library">Library</NavLink>
+                <NavLink href="/">Список моделей</NavLink>
+                <NavLink href="/library">Библиотека</NavLink>
+                <NavLink href="/upload">Загрузить модель</NavLink>
             </>
         )
     } else {
         return (
             <>
-                <NavLink href="/">Home</NavLink>
+                <NavLink href="/">Список моделей</NavLink>
             </>
         )
     }

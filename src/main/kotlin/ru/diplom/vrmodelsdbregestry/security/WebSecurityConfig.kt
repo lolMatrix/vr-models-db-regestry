@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 import ru.diplom.vrmodelsdbregestry.service.UserService
 
 
@@ -59,7 +60,7 @@ class WebSecurityConfig(
         authenticationJwtTokenFilter: AuthTokenFilter,
         authenticationProvider: DaoAuthenticationProvider
     ): SecurityFilterChain {
-        http.cors().and().csrf().disable()
+        http.csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .authorizeHttpRequests()
@@ -72,7 +73,19 @@ class WebSecurityConfig(
             ).permitAll()
             .anyRequest().authenticated()
         http.authenticationProvider(authenticationProvider)
+        http.cors()
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
+    }
+
+    @Bean
+    fun corsFilter(): CorsFilter {
+        val source = UrlBasedCorsConfigurationSource()
+        val config = CorsConfiguration()
+        config.addAllowedOrigin("*")
+        config.addAllowedHeader("*")
+        config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        source.registerCorsConfiguration("/**", config)
+        return CorsFilter(source)
     }
 }

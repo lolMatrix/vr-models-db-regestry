@@ -1,15 +1,16 @@
 import {useEffect, useState} from "react";
+import {useCookies} from "react-cookie";
 
-export default function useLibraryList(url, token) {
+export default function useLibraryList(url) {
     const [data, setData] = useState();
-
+    const [cookies] = useCookies(['auth'])
     useEffect(() => {
         fetch(
             url,
             {
                 mode:'cors',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${cookies.auth}`
                 }
             }
         ).then(response => response.json())
@@ -19,6 +20,6 @@ export default function useLibraryList(url, token) {
             })
             .catch()
             .finally();
-    }, [url, token]);
+    }, [url, cookies]);
     return data;
 }

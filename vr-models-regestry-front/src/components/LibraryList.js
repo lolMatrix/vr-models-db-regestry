@@ -1,11 +1,9 @@
-import {useCookies} from "react-cookie";
 import useLibraryList from "../hooks/useLibraryList";
 import {ListGroup} from "react-bootstrap";
 import React from "react";
 
 export default function LibraryList() {
-    const [cookies] = useCookies(['auth'])
-    const data = useLibraryList('http://localhost:8080/lib', cookies.auth)
+    const data = useLibraryList('http://localhost:8080/lib')
     if (data === undefined) {
         return (
             <h1>Please, wait</h1>

@@ -2,8 +2,10 @@ package ru.diplom.vrmodelsdbregestry.repository
 
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -51,6 +53,27 @@ class UserRepositoryJpaTest {
         val foundClient = userRepository.getByName("name")
 
         assertNull(foundClient)
+    }
+
+    @Test
+    fun `should return true when user by name exists`() {
+        val client = Client(
+            id = UUID.randomUUID(),
+            name = "name",
+            password = "password"
+        )
+        userRepository.save(client)
+
+        val hasUser = userRepository.existsByName("name")
+
+        assertTrue(hasUser)
+    }
+
+    @Test
+    fun `should return false when user by name not exists`() {
+        val hasUser = userRepository.existsByName("name")
+
+        assertFalse(hasUser)
     }
 
     @TestConfiguration

@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
 
-//'https://jsonplaceholder.typicode.com/posts?_limit=10'
 function useFetch(url) {
     const [data, setData] = useState();
     const [cookies] = useCookies(['auth'])

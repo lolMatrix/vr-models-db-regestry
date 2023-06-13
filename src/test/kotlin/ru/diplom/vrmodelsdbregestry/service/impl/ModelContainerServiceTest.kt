@@ -10,6 +10,7 @@ import io.mockk.verifyOrder
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -19,13 +20,14 @@ import ru.diplom.vrmodelsdbregestry.model.Client
 import ru.diplom.vrmodelsdbregestry.model.DatabaseFile
 import ru.diplom.vrmodelsdbregestry.repository.DatabaseFileRepository
 import ru.diplom.vrmodelsdbregestry.repository.UserRepository
+import ru.diplom.vrmodelsdbregestry.verification.VerificationChain
 import java.util.UUID
-import kotlin.random.Random
 
 @ExtendWith(MockKExtension::class)
 class ModelContainerServiceTest(
     @MockK private val userRepository: UserRepository,
-    @MockK private val databaseFileRepository: DatabaseFileRepository
+    @MockK private val databaseFileRepository: DatabaseFileRepository,
+    @MockK private val verificationChain: VerificationChain
 ) {
     @InjectMockKs
     private lateinit var modelContainerServiceImpl: ModelContainerServiceImpl
@@ -36,19 +38,39 @@ class ModelContainerServiceTest(
         every { userRepository.getReferenceById(any()) } returns user
         every { databaseFileRepository.save(any()) } returns mockk()
         every { userRepository.save(any()) } returns mockk()
+        every { verificationChain.verify(any()) } returns Unit
 
         modelContainerServiceImpl.upload(
             name = "name",
             description = "desc",
-            file = Random.nextBytes(1),
+            file = mockk(relaxed = true),
             createdBy = user
         )
 
         verifyOrder {
             assertThat(user.library.size, `is`(1))
+            verificationChain.verify(any())
             databaseFileRepository.save(any())
             userRepository.getReferenceById(user.id)
             userRepository.save(any())
+        }
+    }
+
+    @Test
+    fun `should throw when verification failed`() {
+        val user = client()
+        every { verificationChain.verify(any()) } throws IllegalStateException()
+
+        assertThrows<IllegalStateException> {
+            modelContainerServiceImpl.upload(
+                name = "name",
+                description = "desc",
+                file = mockk(relaxed = true),
+                createdBy = user
+            )
+        }
+        verifyOrder {
+            verificationChain.verify(any())
         }
     }
 

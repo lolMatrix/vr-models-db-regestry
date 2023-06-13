@@ -2,7 +2,9 @@ package ru.diplom.vrmodelsdbregestry.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,6 +18,7 @@ import java.util.UUID
 @RestController
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/lib")
+@CrossOrigin(maxAge = 3600)
 class LibraryController(
     private val libraryService: LibraryService
 ) {
@@ -42,12 +45,15 @@ class LibraryController(
             )
         }
 
-    @GetMapping("/{fileId}", produces = ["application/zip"])
+    @GetMapping("/{fileId}", produces = ["application/octet-stream"])
     @Operation(summary = "Скачать модель с сервера из библиотеки пользователя")
-    fun getFile(@PathVariable fileId: UUID): ByteArray {
-        return libraryService.getFileBytes(
-            currentClient = SecurityContextHolder.getContext().authentication.principal as Client,
-            fileId = fileId
-        )
+    fun getFile(@PathVariable fileId: UUID): ResponseEntity<ByteArray> {
+        return ResponseEntity.status(200).header("Content-Disposition", "attachment;filename=model.zip")
+            .body(
+                libraryService.getFileBytes(
+                    currentClient = SecurityContextHolder.getContext().authentication.principal as Client,
+                    fileId = fileId
+                )
+            )
     }
 }

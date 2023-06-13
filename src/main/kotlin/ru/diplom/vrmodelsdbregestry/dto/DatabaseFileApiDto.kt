@@ -6,5 +6,5 @@ data class DatabaseFileApiDto(
     val id: UUID,
     val name: String,
     val description: String,
-    val haveInLibrary: Boolean = true
+    val haveInLibrary: Boolean = false
 )

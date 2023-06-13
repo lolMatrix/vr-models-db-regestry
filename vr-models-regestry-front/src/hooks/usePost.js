@@ -1,12 +1,13 @@
-//'https://jsonplaceholder.typicode.com/posts?_limit=10'
 async function usePost(url, login, password) {
     try {
-        let response = await fetch(
+        return await fetch(
             url,
             {
                 mode: 'cors',
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(
                     {
                         name: login,
@@ -15,10 +16,12 @@ async function usePost(url, login, password) {
                 )
             }
         )
-        return response
     } catch (e) {
         console.log(e)
-        return null
+        return {
+            ok: false,
+            value: e.body
+        }
     }
 }
 

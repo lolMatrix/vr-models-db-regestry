@@ -2,9 +2,9 @@ package ru.diplom.vrmodelsdbregestry.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
-import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,11 +20,11 @@ import ru.diplom.vrmodelsdbregestry.service.UserService
 
 @RestController
 @RequestMapping("/container")
+@CrossOrigin(maxAge = 3600)
 class ContainerController(
     private val modelContainerService: ModelContainerService,
     private val userService: UserService
 ) {
-    private val log = LoggerFactory.getLogger(ContainerController::class.java)
 
     @PostMapping("/{name}/{description}", consumes = ["multipart/form-data"])
     @Operation(summary = "Загрузить оптимизированную модель", security = [SecurityRequirement(name = "bearerAuth")])
@@ -33,14 +33,11 @@ class ContainerController(
         @PathVariable description: String,
         @RequestBody container: MultipartFile
     ) {
-        check(container.originalFilename?.matches(FILE_NAME_PATTERN) ?: false) {
-            "Недопустимое имя файла или имя не передано: ${container.originalFilename}"
-        }
         modelContainerService.upload(
             name = name,
             description = description,
             createdBy = SecurityContextHolder.getContext().authentication.principal as Client,
-            file = container.bytes
+            file = container
         )
     }
 
@@ -66,12 +63,8 @@ class ContainerController(
                 id = it.id,
                 name = it.name,
                 description = it.description,
-                haveInLibrary = databaseUser.library.contains(it)
+                haveInLibrary = databaseUser.library.any { libFile -> libFile.id == it.id }
             )
         }
-    }
-
-    companion object {
-        private val FILE_NAME_PATTERN = Regex("^[A-z]*\\.zip\$")
     }
 }

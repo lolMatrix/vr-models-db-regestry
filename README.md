@@ -13,7 +13,7 @@ cd src/docker
 ```
 и выполнить команду 
 ```shell
-docker-copmpose up
+docker-compose up -d
 ```
 
 # Требования
