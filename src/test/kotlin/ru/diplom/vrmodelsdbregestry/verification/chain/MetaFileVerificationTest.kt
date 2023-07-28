@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.springframework.util.ResourceUtils
-import ru.diplom.vrmodelsdbregestry.verification.context.VerificationContext
+import ru.diplom.vrmodelsdbregestry.utils.verificationContext
 
 class MetaFileVerificationTest {
 
@@ -16,9 +16,8 @@ class MetaFileVerificationTest {
 
     @Test
     fun `should do nothing when meta file exists`() {
-        val verificationContext = VerificationContext(
-            fileName = "valid_case.zip",
-            bytes = ResourceUtils.getFile("classpath:valid_case.zip").readBytes()
+        val verificationContext = verificationContext(
+            bytes = ResourceUtils.getFile("classpath:valid_case.zip").readBytes(),
         )
 
         assertDoesNotThrow {
@@ -30,8 +29,7 @@ class MetaFileVerificationTest {
 
     @Test
     fun `should throw when file zip file is empty`() {
-        val verificationContext = VerificationContext(
-            fileName = "empty.zip",
+        val verificationContext = verificationContext(
             bytes = ResourceUtils.getFile("classpath:empty.zip").readBytes()
         )
 

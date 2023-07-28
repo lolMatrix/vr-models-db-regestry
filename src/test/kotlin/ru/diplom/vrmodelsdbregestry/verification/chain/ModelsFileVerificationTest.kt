@@ -5,8 +5,9 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.springframework.util.ResourceUtils
-import ru.diplom.vrmodelsdbregestry.verification.context.VerificationContext
+import ru.diplom.vrmodelsdbregestry.utils.component
+import ru.diplom.vrmodelsdbregestry.utils.positionInstruction
+import ru.diplom.vrmodelsdbregestry.utils.verificationContext
 
 class ModelsFileVerificationTest {
 
@@ -14,9 +15,13 @@ class ModelsFileVerificationTest {
 
     @Test
     fun `should do nothing when all components in container`() {
-        val verificationContext = VerificationContext(
-            fileName = "valid_case.zip",
-            bytes = ResourceUtils.getFile("classpath:valid_case.zip").readBytes()
+        val verificationContext = verificationContext(
+            filesList = mutableListOf("bore_1.mtl", "bore_1.obj"),
+            positioningInstruction = positionInstruction(
+                components = listOf(
+                    component("bore_1")
+                )
+            )
         )
 
         assertDoesNotThrow {
@@ -26,9 +31,13 @@ class ModelsFileVerificationTest {
 
     @Test
     fun `should throw when one of obj file not exits`() {
-        val verificationContext = VerificationContext(
-            fileName = "without_obj.zip",
-            bytes = ResourceUtils.getFile("classpath:without_obj.zip").readBytes()
+        val verificationContext = verificationContext(
+            filesList = mutableListOf("bore_1.mtl"),
+            positioningInstruction = positionInstruction(
+                components = listOf(
+                    component("bore_1")
+                )
+            )
         )
 
         assertThrows<IllegalStateException> {
@@ -40,9 +49,13 @@ class ModelsFileVerificationTest {
 
     @Test
     fun `should throw when one of mtl file not exits`() {
-        val verificationContext = VerificationContext(
-            fileName = "without_mtl.zip",
-            bytes = ResourceUtils.getFile("classpath:without_mtl.zip").readBytes()
+        val verificationContext = verificationContext(
+            filesList = mutableListOf("bore_1.obj"),
+            positioningInstruction = positionInstruction(
+                components = listOf(
+                    component("bore_1")
+                )
+            )
         )
 
         assertThrows<IllegalStateException> {
@@ -54,9 +67,12 @@ class ModelsFileVerificationTest {
 
     @Test
     fun `should throw when components files not exists`() {
-        val verificationContext = VerificationContext(
-            fileName = "without_components.zip",
-            bytes = ResourceUtils.getFile("classpath:without_components.zip").readBytes()
+        val verificationContext = verificationContext(
+            positioningInstruction = positionInstruction(
+                components = listOf(
+                    component("bore_1")
+                )
+            )
         )
 
         assertThrows<IllegalStateException> {

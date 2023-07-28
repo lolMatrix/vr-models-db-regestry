@@ -8,9 +8,8 @@ import ru.diplom.vrmodelsdbregestry.model.Client
 import ru.diplom.vrmodelsdbregestry.model.DatabaseFile
 import ru.diplom.vrmodelsdbregestry.repository.DatabaseFileRepository
 import ru.diplom.vrmodelsdbregestry.repository.UserRepository
+import ru.diplom.vrmodelsdbregestry.service.ContainerVerifier
 import ru.diplom.vrmodelsdbregestry.service.ModelContainerService
-import ru.diplom.vrmodelsdbregestry.verification.VerificationChain
-import ru.diplom.vrmodelsdbregestry.verification.context.VerificationContext
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -18,7 +17,7 @@ import java.util.UUID
 class ModelContainerServiceImpl(
     private val databaseFileRepository: DatabaseFileRepository,
     private val userRepository: UserRepository,
-    private val verificationChain: VerificationChain
+    private val containerVerifier: ContainerVerifier
 ) : ModelContainerService {
 
     override fun upload(
@@ -27,11 +26,9 @@ class ModelContainerServiceImpl(
         createdBy: Client,
         file: MultipartFile
     ) {
-        verificationChain.verify(
-            VerificationContext(
-                fileName = file.originalFilename.orEmpty(),
-                bytes = file.bytes
-            )
+        containerVerifier.verifyContainer(
+            fileName = file.originalFilename.orEmpty(),
+            containerBytes = file.bytes
         )
         val databaseFile = DatabaseFile(
             id = UUID.randomUUID(),

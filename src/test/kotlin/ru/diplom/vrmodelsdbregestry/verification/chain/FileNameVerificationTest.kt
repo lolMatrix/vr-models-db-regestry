@@ -5,7 +5,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import ru.diplom.vrmodelsdbregestry.verification.context.VerificationContext
+import ru.diplom.vrmodelsdbregestry.utils.verificationContext
 
 class FileNameVerificationTest {
 
@@ -13,9 +13,8 @@ class FileNameVerificationTest {
 
     @Test
     fun `should do nothing when filename is matches pattern`() {
-        val verificationContext = VerificationContext(
-            fileName = "test-123_4.zip",
-            bytes = byteArrayOf()
+        val verificationContext = verificationContext(
+            fileName = "test-123_4.zip"
         )
 
         assertDoesNotThrow {
@@ -25,9 +24,8 @@ class FileNameVerificationTest {
 
     @Test
     fun `should throw when filename not matches pattern`() {
-        val verificationContext = VerificationContext(
-            fileName = "test-123_4.rar",
-            bytes = byteArrayOf()
+        val verificationContext = verificationContext(
+            fileName = "test-123_4.rar"
         )
 
         assertThrows<IllegalStateException> {
@@ -39,9 +37,8 @@ class FileNameVerificationTest {
 
     @Test
     fun `should throw when filename is empty`() {
-        val verificationContext = VerificationContext(
+        val verificationContext = verificationContext(
             fileName = "",
-            bytes = byteArrayOf()
         )
 
         assertThrows<IllegalStateException> {

@@ -20,14 +20,14 @@ import ru.diplom.vrmodelsdbregestry.model.Client
 import ru.diplom.vrmodelsdbregestry.model.DatabaseFile
 import ru.diplom.vrmodelsdbregestry.repository.DatabaseFileRepository
 import ru.diplom.vrmodelsdbregestry.repository.UserRepository
-import ru.diplom.vrmodelsdbregestry.verification.VerificationChain
+import ru.diplom.vrmodelsdbregestry.service.ContainerVerifier
 import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 class ModelContainerServiceTest(
     @MockK private val userRepository: UserRepository,
     @MockK private val databaseFileRepository: DatabaseFileRepository,
-    @MockK private val verificationChain: VerificationChain
+    @MockK private val containerVerifier: ContainerVerifier
 ) {
     @InjectMockKs
     private lateinit var modelContainerServiceImpl: ModelContainerServiceImpl
@@ -38,7 +38,7 @@ class ModelContainerServiceTest(
         every { userRepository.getReferenceById(any()) } returns user
         every { databaseFileRepository.save(any()) } returns mockk()
         every { userRepository.save(any()) } returns mockk()
-        every { verificationChain.verify(any()) } returns Unit
+        every { containerVerifier.verifyContainer(any(), any()) } returns Unit
 
         modelContainerServiceImpl.upload(
             name = "name",
@@ -49,7 +49,7 @@ class ModelContainerServiceTest(
 
         verifyOrder {
             assertThat(user.library.size, `is`(1))
-            verificationChain.verify(any())
+            containerVerifier.verifyContainer(any(), any())
             databaseFileRepository.save(any())
             userRepository.getReferenceById(user.id)
             userRepository.save(any())
@@ -59,7 +59,7 @@ class ModelContainerServiceTest(
     @Test
     fun `should throw when verification failed`() {
         val user = client()
-        every { verificationChain.verify(any()) } throws IllegalStateException()
+        every { containerVerifier.verifyContainer(any(), any()) } throws IllegalStateException()
 
         assertThrows<IllegalStateException> {
             modelContainerServiceImpl.upload(
@@ -70,7 +70,7 @@ class ModelContainerServiceTest(
             )
         }
         verifyOrder {
-            verificationChain.verify(any())
+            containerVerifier.verifyContainer(any(), any())
         }
     }
 
