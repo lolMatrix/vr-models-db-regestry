@@ -1,10 +1,11 @@
 package ru.diplom.vrmodelsdbregestry.security
 
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
-import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.UnsupportedJwtException
+import io.jsonwebtoken.security.Keys
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -20,7 +21,8 @@ class JwtUtils(
     @Value("\${diplom.app.jwtSecret}")
     private val jwtSecret: String,
     @Value("\${diplom.app.jwtExpirationMs}")
-    private val jwtExpirationMs: Long
+    private val jwtExpirationMs: Long,
+    private val jwtParser: JwtParser
 ) {
 
     fun generateJwtToken(authentication: Authentication): String {
@@ -29,17 +31,15 @@ class JwtUtils(
             .setSubject(userPrincipal.username)
             .setIssuedAt(Date())
             .setExpiration(Date(Date().time + jwtExpirationMs))
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .signWith(Keys.hmacShaKeyFor(jwtSecret.toByteArray()))
             .compact()
     }
 
-    fun getUserNameFromJwtToken(token: String?): String {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).body.subject
-    }
+    fun getUserNameFromJwtToken(token: String?): String = jwtParser.parseClaimsJws(token).body.subject
 
     fun validateJwtToken(authToken: String?): Boolean {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken)
+            jwtParser.parseClaimsJws(authToken)
             return true
         } catch (e: SignatureException) {
             logger.error("Invalid JWT signature")
